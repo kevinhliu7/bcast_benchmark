@@ -1,1 +1,1 @@
-## Make sure MPICH is installed
+## Make sure MPICH is installed before using this
