@@ -2,10 +2,6 @@
 #include <stdio.h>
 #include "mpi.h"
 
-// this program is meant to perform
-// benchmarks on Bcast
-
-// Currently, we are working with the original ordering of ranks
 
 int main(int argc, char** argv) {
     FILE* fptr = fopen("/scratch/test-mpi-build/bcast_benchmark/results.txt", "a");
