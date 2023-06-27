@@ -20,6 +20,9 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+
+
     
     double time_begin = MPI_Wtime();
     for (int i = 0; i < 10000; i++) {
@@ -34,7 +37,7 @@ int main(int argc, char** argv) {
     time_single_bcast_true *= 1000000;
 
     if (!rank) {
-        fprintf(fptr, "%lf", time_single_bcast_true);
+        fprintf(fptr, "%lf\n", time_single_bcast_true);
         printf("Time: %lf \n", time_single_bcast_true);
     }
 

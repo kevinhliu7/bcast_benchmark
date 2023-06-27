@@ -3,13 +3,12 @@
 export MPIR_CVAR_BCAST_INTRA_ALGORITHM=binomial
 echo $MPIR_CVAR_BCAST_INTRA_ALGORITHM
 
-#SBATCH --job-name=<my_job_name>
+#SBATCH --job-name=MPIbenchmark
 #SBATCH --account=MPI
 #SBATCH --partition=bdwall
 #SBATCH --nodes=20
-#SBATCH --ntasks-per-node=64 # Can I get rid of this?
-#SBATCH --output=<my_job_name>.out
-#SBATCH --error=<my_job_name>.error
+#SBATCH --output=MPIbenchmark.out
+#SBATCH --error=MPIbenchmark.error
 #SBATCH --time=01:00:00
 
 for nodes in 1 4 8 16 20;
