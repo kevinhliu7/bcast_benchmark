@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
     int new_rank;
     MPI_Comm_rank(new_comm, &new_rank);
     
-    printf("My old rank was %d and now my new rank is %d \n", rank, new_rank);
+    //printf("My old rank was %d and now my new rank is %d \n", rank, new_rank);
 
     double time_begin = MPI_Wtime();
     for (int i = 0; i < 10000; i++) {

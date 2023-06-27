@@ -1,8 +1,4 @@
 #!/bin/bash
-
-export MPIR_CVAR_BCAST_INTRA_ALGORITHM=binomial
-echo $MPIR_CVAR_BCAST_INTRA_ALGORITHM
-
 #SBATCH --job-name=MPIbenchmark
 #SBATCH --account=MPI
 #SBATCH --partition=bdwall
@@ -10,7 +6,8 @@ echo $MPIR_CVAR_BCAST_INTRA_ALGORITHM
 #SBATCH --output=MPIbenchmark.out
 #SBATCH --error=MPIbenchmark.error
 #SBATCH --time=01:00:00
-
+export MPIR_CVAR_BCAST_INTRA_ALGORITHM=binomial
+echo $MPIR_CVAR_BCAST_INTRA_ALGORITHM
 for nodes in 1 4 8 16 20;
 do
     for ppn in {1..36}
