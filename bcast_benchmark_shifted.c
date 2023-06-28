@@ -2,21 +2,21 @@
 #include <stdio.h>
 #include "mpi.h"
 
-int get_color(int size, int num_nodes, int rank) {
-    int PPN = size / num_nodes;
-    if (size > 2 && num_nodes > 1) {
-        int j = 2;
-        for  (int i = 0; i < num_nodes; i++) {
-            for (int k = 0; k < PPN; k++) {
-                if (j == rank) {
-                    return i;
-                }
-                j = (j + 1) % size;
-            }
-        }
-    }
-    return -1;
-}
+// int get_color(int size, int num_nodes, int rank) {
+//     int PPN = size / num_nodes;
+//     if (size > 2 && num_nodes > 1) {
+//         int j = 2;
+//         for  (int i = 0; i < num_nodes; i++) {
+//             for (int k = 0; k < PPN; k++) {
+//                 if (j == rank) {
+//                     return i;
+//                 }
+//                 j = (j + 1) % size;
+//             }
+//         }
+//     }
+//     return -1;
+// }
 
 int main(int argc, char** argv) {
     FILE* fptr = fopen("/scratch/test-mpi-build/bcast_benchmark/results_shifted.txt", "a");
@@ -36,7 +36,8 @@ int main(int argc, char** argv) {
     int key = (rank + 2) % num_procs;
     int num_nodes = atoi(getenv("SLURM_JOB_NUM_NODES"));
     int new_rank;
-    int color = get_color(num_procs, num_nodes, rank);
+    //int color = get_color(num_procs, num_nodes, rank); this part is wrong, all processes should still belong to the same communicator
+    int color = 0;
 
     MPI_Comm new_comm;
     MPI_Comm_split(MPI_COMM_WORLD, color, key, &new_comm);

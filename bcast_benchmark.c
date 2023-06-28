@@ -20,9 +20,6 @@ int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
-
-
     
     double time_begin = MPI_Wtime();
     for (int i = 0; i < 10000; i++) {

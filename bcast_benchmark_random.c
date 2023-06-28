@@ -3,7 +3,7 @@
 #include "mpi.h"
 
 int main(int argc, char** argv) {
-    FILE* fptr = fopen("/scratch/test-mpi-build/bcast_benchmark/results_jump.txt", "a");
+    FILE* fptr = fopen("/scratch/test-mpi-build/bcast_benchmark/results_random.txt", "a");
     int rank;
     int num_procs;
     int number = 5;
@@ -17,8 +17,11 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
     int num_nodes = atoi(getenv("SLURM_JOB_NUM_NODES"));
-    int color = rank % num_nodes; // color = rank % Number of Nodes
-    int key = rank; // key = rank
+    //int color = rank % num_nodes; // color = rank % Number of Nodes This part is wrong all processes should still belong to the same communicator
+    //int key = rank; // key = rank
+    srand(time(NULL));
+    int color = 0;
+    int key = rand() % num_nodes;
 
     // does SLURM allocate a communicator to every node???
 

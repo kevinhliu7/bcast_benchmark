@@ -1,7 +1,7 @@
 import os
 
 f = open("results.txt", "w")
-f1 = open("results_jump.txt", "w")
+f1 = open("results_random.txt", "w")
 f2 = open("results_shifted.txt", "w")
 
 f2.write("")

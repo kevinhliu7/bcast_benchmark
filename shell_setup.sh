@@ -15,7 +15,7 @@ do
         total_number_processes=`expr $nodes \* $ppn`
         mpiexec -n $total_number_processes -ppn $ppn ./test_normal_orientation
         mpiexec -n $total_number_processes -ppn $ppn ./test_orientation_shifted
-        mpiexec -n $total_number_processes -ppn $ppn ./test_orientation_jumper
+        mpiexec -n $total_number_processes -ppn $ppn ./test_orientation_random
     done
 done
 
