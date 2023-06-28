@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     int num_nodes = atoi(getenv("SLURM_JOB_NUM_NODES"));
     //int color = rank % num_nodes; // color = rank % Number of Nodes This part is wrong all processes should still belong to the same communicator
     //int key = rank; // key = rank
-    srand(time(NULL));
+    srand(MPI_Wtime());
     int color = 0;
     int key = rand() % num_nodes;
 
