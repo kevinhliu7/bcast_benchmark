@@ -16,6 +16,7 @@ int main(int argc, char** argv) {
     MPI_Status status;
     
     // intended to warmup the machine
+
     int error_num;
     
     for (int i = 0; i < 1000; i++) {
@@ -23,18 +24,25 @@ int main(int argc, char** argv) {
     }
     
     double start_time = MPI_Wtime();
+
     for (int i = 0; i < 10000; i++) {
         error_num = MPI_Sendrecv(&msg, 1, MPI_CHAR, 1, 0, &msg, 1, MPI_CHAR, 0, 1, MPI_COMM_WORLD, &status);
     }
+
     double end_time = MPI_Wtime();
     
     double duration = (end_time - start_time) / 10000;
 
+    double true_duration;
 
+    MPI_Allreduce(&duration, &true_duration, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
     
+    if (!rank) {
+        printf("My latency is: %lf \n", true_duration * 1000000);
+        fprintf(fptr, "%lf\n", true_duration * 1000000);
+    }
 
-    MPI_Allreduce();
-
+    fclose(fptr);
 
     MPI_Finalize();
     
