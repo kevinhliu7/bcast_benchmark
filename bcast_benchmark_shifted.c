@@ -2,28 +2,24 @@
 #include <stdio.h>
 #include "mpi.h"
 
-// int get_color(int size, int num_nodes, int rank) {
-//     int PPN = size / num_nodes;
-//     if (size > 2 && num_nodes > 1) {
-//         int j = 2;
-//         for  (int i = 0; i < num_nodes; i++) {
-//             for (int k = 0; k < PPN; k++) {
-//                 if (j == rank) {
-//                     return i;
-//                 }
-//                 j = (j + 1) % size;
-//             }
-//         }
-//     }
-//     return -1;
-// }
+#define ROUNDS 5 
+#define ITERATIONS 1000000
 
 int main(int argc, char** argv) {
-    FILE* fptr = fopen("/scratch/test-mpi-build/bcast_benchmark/results_shifted.txt", "a");
+    
     int rank;
     int num_procs;
     int number = 5;
-    double time_single_bcast_true = -1;
+    //double time_single_bcast_true = -1;
+    char* hier_or_bcast = getenv("MPIR_CVAR_BCAST_INTRA_ALGORITHM");
+    
+    FILE* fptr;
+    if (hier_or_bcast[0] == 'b') {
+        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_random.txt", "a");
+    } else {
+        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_hier_random.txt", "a");
+    }
+
     if (!fptr) {
         printf("Could Not Open File \n");
         exit(1);
@@ -43,23 +39,66 @@ int main(int argc, char** argv) {
     MPI_Comm_split(MPI_COMM_WORLD, color, key, &new_comm);
     MPI_Comm_rank(new_comm, &new_rank);
 
-    //printf("My old rank was %d and now my new rank is %d \n", rank, new_rank);
-    
-    double time_begin = MPI_Wtime();
-    for (int i = 0; i < 10000; i++) {
-        MPI_Bcast(&number, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    // warmup the machine
+    for (int i = 0; i < ITERATIONS; i++) {
+        MPI_Bcast(&number, 1, MPI_INT, 0, new_comm);
     }
-    double time_end = MPI_Wtime();
-    // find the average time to get the time of a single bcast
-    double time_single_bcast = (time_end - time_begin) / 10000;
+    
+    double* times = (double*) malloc(sizeof(double) * ROUNDS);
 
-    MPI_Allreduce(&time_single_bcast, &time_single_bcast_true, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
+    for (int num_rounds = 0; num_rounds < ROUNDS; num_rounds++) {
 
-    time_single_bcast_true *= 1000000;
+        double time_begin = MPI_Wtime();
+        for (int i = 0; i < ITERATIONS; i++) {
+            MPI_Bcast(&number, 1, MPI_INT, 0, new_comm);
+        }
+        double time_end = MPI_Wtime();
+
+        // find the average time to get the time of a single bcast
+        double time_single_bcast = (time_end - time_begin) / ITERATIONS;
+
+        times[num_rounds] = time_single_bcast;
+        
+    }
+    
+    // Bubblesort the array in ascending order
+    for (int i = 0; i < ROUNDS; i++) {
+        for (int j = 0; j < ROUNDS - 1; j++) {
+            if (times[i] > times[i + 1]) {
+                int tmp = times[i];
+                times[i] = times[i + 1];
+                times[i + 1] = tmp;
+            }
+        }
+    }
+
+    double Q1 = times[ROUNDS / 4];
+    double Q3 = times[(ROUNDS * 3) / 4];
+    double IQR = Q3 - Q1;
+
+    // remove outliers
+    int num_valid = ROUNDS;
+    double true_sum = 0;
+    for (int i = 0; i < ROUNDS; i++) {
+        if (times[i] >= 1.5 * IQR) {
+            times[i] = 0;
+            num_valid--;
+        } else {
+            true_sum += times[i];
+        }
+    }
+    double true_average = true_sum / num_valid;
+    double real_time = -1;
+
+    free(times);
+
+    MPI_Allreduce(&true_average, &real_time, 1, MPI_DOUBLE, MPI_MAX, new_comm);
+
+    real_time *= 1000000;
 
     if (!rank) {
-        fprintf(fptr, "%lf\n", time_single_bcast_true);
-        printf("Time: %lf \n", time_single_bcast_true);
+        fprintf(fptr, "%lf\n", real_time);
+        printf("Time: %lf\n", real_time);
     }
 
     MPI_Finalize();

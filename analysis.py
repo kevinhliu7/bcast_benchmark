@@ -2,9 +2,9 @@ import os
 import matplotlib.pyplot as plt
 
 
-norm = open("/scratch/test-mpi-build/bcast_benchmark/results.txt")
-random = open("/scratch/test-mpi-build/bcast_benchmark/results_random.txt")
-shift = open("/scratch/test-mpi-build/bcast_benchmark/results_shifted.txt")
+norm = open("/scratch/test-mpi-build/bcast_benchmark/results_hier.txt")
+random = open("/scratch/test-mpi-build/bcast_benchmark/results_hier_random.txt")
+shift = open("/scratch/test-mpi-build/bcast_benchmark/results_hier_shifted.txt")
 
 x_axis = [j for j in range(1, 37)]
 
@@ -22,7 +22,7 @@ cleaner.close()
 
 for nodes in {1, 4, 8, 16, 20}:
     for ppn in range(1, 37):
-        command = "python3 binomial_simulator.py " + str(nodes) + " " + str(ppn) + " " + "0.5 " + "1 " + "0 " + "0"
+        command = "python3 hierarchical_simulator.py " + str(nodes) + " " + str(ppn) + " " + "1.2 " + "1.4 " + "0 " + "0"
         os.system(command)
 theory = open("/scratch/test-mpi-build/bcast_benchmark/results_theory.txt")
 
