@@ -9,7 +9,7 @@ if (len(sys.argv) < 7):
     print("You did not input enough cmd line arguments, expected: N, PPN, alpha1, alpha2, beta1, beta2")
     exit()
 
-# hierarchical runtime
+# hierarchical runtime formula
 def calculate_time_hierarchical(B_inter, B_intra, a_inter, a_intra, m, N, PPN):
     return math.ceil(math.log2(N))*(B_inter * m + a_inter) + math.ceil(math.log2(PPN))*(B_intra * m + a_intra)
 

@@ -9,7 +9,7 @@ if (len(sys.argv) < 7):
     print("You did not input enough cmd line arguments, expected: N, PPN, alpha1, alpha2, beta1, beta2")
     exit()
 
-# hierarchical runtime
+# hierarchical runtime formula
 def calculate_time_hierarchical(B_inter, B_intra, a_inter, a_intra, m, N, PPN):
     return math.ceil(math.log2(N))*(B_inter * m + a_inter) + math.ceil(math.log2(PPN))*(B_intra * m + a_intra)
 
@@ -147,6 +147,6 @@ n_complete = 0
 while (n_complete < NP):
     for i in range(NP):
         n_complete += progress(i, sends[i], recvs[i])
-f = open("results_theory.txt", "a")
+f = open("results_hier_theory.txt", "a")
 f.write(str(final_time) + " " + str(N) + " " + str(PPN) + " " + str(alpha1) + " " + str(alpha2) + " " + str(betan1) + " " + str(betan2) + "\n")
 f.close()

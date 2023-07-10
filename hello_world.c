@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "mpi.h"
 
+// test to make sure that MPI is working
+
 int main(int argc, char** argv) {
     int rank;
     int num_procs;

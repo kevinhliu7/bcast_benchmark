@@ -8,12 +8,11 @@
 // Currently, we are working with the original ordering of ranks
 #define ROUNDS 5 
 #define ITERATIONS 1000000
+#define MSG_SIZE 4
 
 int main(int argc, char** argv) {
     
-    int rank;
-    int num_procs;
-    int number = 5;
+    
     //double time_single_bcast_true = -1;
     char* hier_or_bcast = getenv("MPIR_CVAR_BCAST_INTRA_ALGORITHM");
     
@@ -27,13 +26,18 @@ int main(int argc, char** argv) {
         printf("Could Not Open File \n");
         exit(1);
     }
+
+    int rank;
+    int num_procs;
+    char* msg = (char*) malloc(sizeof(char) * MSG_SIZE);
+
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
     // warmup the machine
     for (int i = 0; i < ITERATIONS; i++) {
-        MPI_Bcast(&number, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
     }
     
     double* times = (double*) malloc(sizeof(double) * ROUNDS);
@@ -42,7 +46,7 @@ int main(int argc, char** argv) {
 
         double time_begin = MPI_Wtime();
         for (int i = 0; i < ITERATIONS; i++) {
-            MPI_Bcast(&number, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }
         double time_end = MPI_Wtime();
 
@@ -84,6 +88,7 @@ int main(int argc, char** argv) {
     double real_time = -1;
 
     free(times);
+    free(msg);
 
     MPI_Allreduce(&true_average, &real_time, 1, MPI_DOUBLE, MPI_MAX, MPI_COMM_WORLD);
 
