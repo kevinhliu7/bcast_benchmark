@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "mpi.h"
 
-#define ROUNDS 5 
-#define ITERATIONS 1000000
+
+#define ROUNDS 50 
+#define ITERATIONS 100000
 #define MSG_SIZE 4
 int main(int argc, char** argv) {
     
@@ -51,6 +53,8 @@ int main(int argc, char** argv) {
 
     for (int num_rounds = 0; num_rounds < ROUNDS; num_rounds++) {
 
+        MPI_Barrier(new_comm);
+
         double time_begin = MPI_Wtime();
         for (int i = 0; i < ITERATIONS; i++) {
             MPI_Bcast(&msg, 1, MPI_INT, 0, new_comm);
@@ -60,52 +64,67 @@ int main(int argc, char** argv) {
         // find the average time to get the time of a single bcast
         double time_single_bcast = (time_end - time_begin) / ITERATIONS;
 
-        times[num_rounds] = time_single_bcast;
+        double true_time_single_bcast = -1;
+
+        MPI_Allreduce(&time_single_bcast, &true_time_single_bcast, 1, MPI_DOUBLE, MPI_MAX, new_comm);
+
+
+        times[num_rounds] = true_time_single_bcast;
         
     }
     
     // Bubblesort the array in ascending order
-    for (int i = 0; i < ROUNDS; i++) {
-        for (int j = 0; j < ROUNDS - 1; j++) {
-            if (times[i] > times[i + 1]) {
-                int tmp = times[i];
-                times[i] = times[i + 1];
-                times[i + 1] = tmp;
-            }
-        }
-    }
+    // for (int i = 0; i < ROUNDS; i++) {
+    //     for (int j = 0; j < ROUNDS - 1; j++) {
+    //         if (times[i] > times[i + 1]) {
+    //             int tmp = times[i];
+    //             times[i] = times[i + 1];
+    //             times[i + 1] = tmp;
+    //         }
+    //     }
+    // }
 
-    double Q1 = times[ROUNDS / 4];
-    double Q3 = times[(ROUNDS * 3) / 4];
-    double IQR = Q3 - Q1;
+    // double Q1 = times[ROUNDS / 4];
+    // double Q3 = times[(ROUNDS * 3) / 4];
+    // double IQR = Q3 - Q1;
 
     // remove outliers
-    int num_valid = ROUNDS;
-    double true_sum = 0;
+    // int num_valid = ROUNDS;
+    // double true_sum = 0;
+    // for (int i = 0; i < ROUNDS; i++) {
+    //     if (times[i] >= 1.5 * IQR) {
+    //         times[i] = 0;
+    //         num_valid--;
+    //     } else {
+    //         true_sum += times[i];
+    //     }
+    // }
+    // double true_average = true_sum / num_valid;
+    // double real_time = -1;
+
+    double sum = 0;
+    
     for (int i = 0; i < ROUNDS; i++) {
-        if (times[i] >= 1.5 * IQR) {
-            times[i] = 0;
-            num_valid--;
-        } else {
-            true_sum += times[i];
-        }
+        sum += times[i];
     }
-    double true_average = true_sum / num_valid;
-    double real_time = -1;
+    
+    double mean = sum / ROUNDS;
+    double var = 0;
+    
+    for (int i = 0; i < ROUNDS; i++) {
+        var += (times[i] - mean) * (times[i] - mean);
+    }
+
+    var /= ROUNDS;
 
     free(times);
     free(msg);
 
-    MPI_Allreduce(&true_average, &real_time, 1, MPI_DOUBLE, MPI_MAX, new_comm);
-
-    // convert to microseconds
-    real_time *= 1000000;
+    mean *= 1000000;
+    var *= 1000000;
 
     if (!rank) {
-        fprintf(fptr, "%lf\n", real_time);
-        printf("Time: %lf\n", real_time);
+        fprintf(fptr, "%lf %lf\n", mean, var);
+        printf("Time: %lf; Stdev: %lf \n", mean, var);
     }
-    MPI_Finalize();
-    fclose(fptr);
-    return 0;
 }
