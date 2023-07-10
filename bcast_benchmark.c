@@ -32,13 +32,17 @@ int main(int argc, char** argv) {
     int num_procs;
     char* msg = (char*) malloc(sizeof(char) * MSG_SIZE);
 
+    for (int i = 0; i < MSG_SIZE; i++) {
+        msg[i] = '?';
+    }
+
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     
     // warmup the machine
     for (int i = 0; i < ITERATIONS; i++) {
-        MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(msg, MSG_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD);
     }
     
     double* times = (double*) malloc(sizeof(double) * ROUNDS);
@@ -49,7 +53,7 @@ int main(int argc, char** argv) {
 
         double time_begin = MPI_Wtime();
         for (int i = 0; i < ITERATIONS; i++) {
-            MPI_Bcast(&msg, 1, MPI_INT, 0, MPI_COMM_WORLD);
+            MPI_Bcast(msg, MSG_SIZE, MPI_CHAR, 0, MPI_COMM_WORLD);
         }
         double time_end = MPI_Wtime();
 

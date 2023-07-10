@@ -23,6 +23,10 @@ int main(int argc, char** argv) {
     int num_procs;
     char* msg = (char*) malloc(sizeof(char) * MSG_SIZE);
     
+    for (int i = 0; i < MSG_SIZE; i++) {
+        msg[i] = '?';
+    }
+    
     if (!fptr) {
         printf("Could Not Open File \n");
         exit(1);
@@ -46,7 +50,7 @@ int main(int argc, char** argv) {
     
     // warmup the machine
     for (int i = 0; i < ITERATIONS; i++) {
-        MPI_Bcast(&msg, 1, MPI_INT, 0, new_comm);
+        MPI_Bcast(msg, MSG_SIZE, MPI_CHAR, 0, new_comm);
     }
     
     double* times = (double*) malloc(sizeof(double) * ROUNDS);
@@ -57,7 +61,7 @@ int main(int argc, char** argv) {
 
         double time_begin = MPI_Wtime();
         for (int i = 0; i < ITERATIONS; i++) {
-            MPI_Bcast(&msg, 1, MPI_INT, 0, new_comm);
+            MPI_Bcast(msg, MSG_SIZE, MPI_CHAR, 0, new_comm);
         }
         double time_end = MPI_Wtime();
 
