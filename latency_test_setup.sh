@@ -5,7 +5,7 @@
 #SBATCH --nodes=2
 #SBATCH --output=latency.out
 #SBATCH --error=latency.error
-#SBATCH --time=00:30:00
+#SBATCH --time=00:20:00
 for iterations in {1..50}
 do
     mpiexec -n 2 -ppn 1 ./test_latency # internode

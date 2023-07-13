@@ -5,7 +5,7 @@
 #SBATCH --nodes=20
 #SBATCH --output=binomial.out
 #SBATCH --error=binomial.error
-#SBATCH --time=01:00:00
+#SBATCH --time=01:30:00
 export MPIR_CVAR_BCAST_DEVICE_COLLECTIVE=0
 export MPIR_CVAR_BCAST_INTRA_ALGORITHM=binomial
 echo $MPIR_CVAR_BCAST_INTRA_ALGORITHM
