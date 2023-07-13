@@ -7,7 +7,7 @@
 // benchmarks on Bcast
 
 // Currently, we are working with the original ordering of ranks
-#define ROUNDS 50 
+#define ROUNDS 30 
 #define ITERATIONS 100000
 #define MSG_SIZE 4
 
@@ -19,9 +19,9 @@ int main(int argc, char** argv) {
     
     FILE* fptr;
     if (hier_or_bcast[0] == 'b') {
-        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_random.txt", "a");
+        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bbcast_benchmark/results.txt", "a");
     } else {
-        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_hier_random.txt", "a");
+        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_hier.txt", "a");
     }
     if (!fptr) {
         printf("Could Not Open File \n");
