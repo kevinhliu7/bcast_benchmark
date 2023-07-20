@@ -1,6 +1,6 @@
 import os
 import matplotlib.pyplot as plt
-
+from pylab import *
 norm = open("/scratch/test-mpi-build/bcast_benchmark/results.txt")
 random = open("/scratch/test-mpi-build/bcast_benchmark/results_random.txt")
 shift = open("/scratch/test-mpi-build/bcast_benchmark/results_shifted.txt")
@@ -22,24 +22,24 @@ y_hier_shift = []
 y_hier_theory = []
 
 # clean up simulator outputs
-cleaner = open("/scratch/test-mpi-build/bcast_benchmark/results_theory.txt", "w")
-cleaner.write("")
-os.system("clear")
-cleaner.close()
-cleaner = open("/scratch/test-mpi-build/bcast_benchmark/results_hier_theory.txt", "w")
-cleaner.write("")
-os.system("clear")
-cleaner.close()
+# cleaner = open("/scratch/test-mpi-build/bcast_benchmark/results_theory.txt", "w")
+# cleaner.write("")
+# os.system("clear")
+# cleaner.close()
+# cleaner = open("/scratch/test-mpi-build/bcast_benchmark/results_hier_theory.txt", "w")
+# cleaner.write("")
+# os.system("clear")
+# cleaner.close()
 
-latency_intra = "1.2"
-latency_inter = "1.4"
+# latency_intra = "0.22"
+# latency_inter = "0.45"
 
-for nodes in {1, 4, 8, 16, 20}:
-    for ppn in range(1, 37):
-        command = "python3 binomial_simulator.py " + str(nodes) + " " + str(ppn) + " " + "{} ".format(latency_intra) + "{} ".format(latency_inter) + "0 " + "0"
-        command_hier = "python3 hierarchical_simulator.py " + str(nodes) + " " + str(ppn) + " " + "{} ".format(latency_intra) + "{} ".format(latency_inter) + "0 " + "0"
-        os.system(command)
-        os.system(command_hier)
+# for nodes in {1, 4, 8, 16, 20}:
+#     for ppn in range(1, 37):
+#         command = "python3 binomial_simulator.py " + str(nodes) + " " + str(ppn) + " " + "{} ".format(latency_intra) + "{} ".format(latency_inter) + "0 " + "0"
+#         command_hier = "python3 hierarchical_simulator.py " + str(nodes) + " " + str(ppn) + " " + "{} ".format(latency_intra) + "{} ".format(latency_inter) + "0 " + "0"
+#         os.system(command)
+#         os.system(command_hier)
 
 theory = open("/scratch/test-mpi-build/bcast_benchmark/results_theory.txt")
 theory_hier = open("/scratch/test-mpi-build/bcast_benchmark/results_hier_theory.txt")
@@ -121,62 +121,85 @@ y_hier_shift_16_node = y_hier_shift[108:144]
 y_hier_shift_20_node = y_hier_shift[144:180]
 
 
-plt.title("Runtime vs. PPN (1 Node)")
-plt.xlabel("PPN")
-plt.ylabel("Time (Microseconds)")
-plt.plot(x_axis, y_theory_1_node, label="Theoretical")
-plt.plot(x_axis, y_norm_1_node, label="Normal Orientation")
-plt.plot(x_axis, y_shift_1_node, label="Shifted")
-plt.plot(x_axis, y_random_1_node, label="Random Distribution")
+plt.title("Runtime vs. PPN \n (1 Node, latency_intra = 0.22 μs, latency_inter = 0.45 μs)")
+plt.xlabel("PPN (Processes Per Node)")
+plt.ylabel("Time (μs)")
+plt.plot(x_axis, y_norm_1_node, label="Flat")
+plt.plot(x_axis, y_hier_norm_1_node, label="Topology-Aware")
 plt.legend()
+plt.grid()
 plt.savefig("plot_1_node.png")
 plot_1_node = plt.show()
 
-plt.title("Runtime vs. PPN (4 Nodes)")
-plt.xlabel("PPN")
-plt.ylabel("Time (Microseconds)")
-plt.plot(x_axis, y_theory_4_node, label="Theoretical")
-plt.plot(x_axis, y_norm_4_node, label="Normal Orientation")
-plt.plot(x_axis, y_shift_4_node, label="Shifted")
-plt.plot(x_axis, y_random_4_node, label="Random Distribution")
+plt.title("Runtime vs. PPN \n (4 Nodes, latency_intra = 0.22 μs, latency_inter = 0.45 μs)")
+plt.xlabel("PPN (Processes Per Node)")
+plt.ylabel("Time (μs)")
+plt.plot(x_axis, y_norm_4_node, label="Flat")
+plt.plot(x_axis, y_hier_norm_4_node, label="Topology-Aware")
 plt.legend()
+plt.grid()
 plt.savefig("plot_4_node.png")
 plot_4_node = plt.show()
 
-plt.title("Runtime vs. PPN (8 Nodes)")
-plt.xlabel("PPN")
-plt.ylabel("Time (Microseconds)")
-plt.plot(x_axis, y_theory_8_node, label="Theoretical")
-plt.plot(x_axis, y_norm_8_node, label="Normal Orientation")
-plt.plot(x_axis, y_shift_8_node, label="Shifted")
-plt.plot(x_axis, y_random_8_node, label="Random Distribution")
+plt.title("Runtime vs. PPN \n (8 Nodes, latency_intra = 0.22 μs, latency_inter = 0.45 μs)")
+plt.xlabel("PPN (Processes Per Node)")
+plt.ylabel("Time (μs)")
+plt.plot(x_axis, y_norm_8_node, label="Flat")
+plt.plot(x_axis, y_hier_norm_8_node, label="Topology-Aware")
 plt.legend()
+plt.grid()
 plt.savefig("plot_8_node.png")
 plot_8_node = plt.show()
 
-plt.title("Runtime vs. PPN (16 Nodes)")
-plt.xlabel("PPN")
-plt.ylabel("Time (Microseconds)")
-plt.plot(x_axis, y_theory_16_node, label="Theoretical")
-plt.plot(x_axis, y_norm_16_node, label="Normal Orientation")
-plt.plot(x_axis, y_shift_16_node, label="Shifted")
-plt.plot(x_axis, y_random_16_node, label="Random Distribution")
+plt.title("Runtime vs. PPN \n (16 Nodes, latency_intra = 0.22 μs, latency_inter = 0.45 μs)")
+plt.xlabel("PPN (Processes Per Node)")
+plt.ylabel("Time (μs)")
+plt.plot(x_axis, y_norm_16_node, label="Flat")
+plt.plot(x_axis, y_hier_norm_16_node, label="Topology-Aware")
 plt.legend()
+plt.grid()
 plt.savefig("plot_16_node.png")
 plot_16_node = plt.show()
 
-plt.title("Runtime vs. PPN (20 Nodes)")
-plt.xlabel("PPN")
-plt.ylabel("Time (Microseconds)")
-plt.plot(x_axis, y_theory_20_node, label="Theoretical")
-plt.plot(x_axis, y_norm_20_node, label="Normal Orientation")
-plt.plot(x_axis, y_shift_20_node, label="Shifted")
-plt.plot(x_axis, y_random_20_node, label="Random Distribution")
+
+rc('axes', linewidth=2)
+ax = gca()
+
+
+plt.title("Runtime vs. PPN \n (20 Nodes, latency_intra = 0.22 μs, latency_inter = 0.45 μs)", fontweight='bold')
+plt.xlabel("PPN (Processes Per Node)", fontweight='bold')
+plt.ylabel("Time (μs)", fontweight='bold')
+plt.plot(x_axis, y_norm_20_node, label="Flat", linewidth=2)
+plt.plot(x_axis, y_hier_norm_20_node, label="Topology-Aware", linewidth=2)
 plt.legend()
+plt.grid()
+
+for tick in ax.xaxis.get_major_ticks():
+    tick.label1.set_fontweight('bold')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label1.set_fontweight('bold')
+
 plt.savefig("plot_20_node.png")
 plot_20_node = plt.show()
 
+rc('axes', linewidth=2)
+ax = gca()
 
+plt.title("Runtime vs. PPN \n (20 Nodes, latency_intra = 0.22 μs, latency_inter = 0.45 μs)", fontweight='bold')
+plt.xlabel("PPN (Processes Per Node)", fontweight='bold')
+plt.ylabel("Time (μs)",fontweight='bold')
+plt.plot(x_axis, y_theory_20_node, label="Flat", linewidth=2)
+plt.plot(x_axis, y_hier_theory_20_node, label="Topology-Aware", linewidth=2)
+plt.grid()
+
+for tick in ax.xaxis.get_major_ticks():
+    tick.label1.set_fontweight('bold')
+for tick in ax.yaxis.get_major_ticks():
+    tick.label1.set_fontweight('bold')
+
+plt.legend()
+plt.savefig("plot_theory_20_node.png")
+plot_theory_20_node = plt.show()
 # close fileopeners
 
 norm.close()

@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     
     FILE* fptr;
     if (hier_or_bcast[0] == 'b') {
-        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bbcast_benchmark/results.txt", "a");
+        fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results.txt", "a");
     } else {
         fptr = fopen("/gpfs/fs1/home/kliu/job_submissions/bcast_benchmark/results_hier.txt", "a");
     }
@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
 
     
     mean *= 1000000;
-    var *= 1000000;
+    var *= 1000000 * 1000000;
 
     if (!rank) {
         fprintf(fptr, "%lf %lf\n", mean, var);
